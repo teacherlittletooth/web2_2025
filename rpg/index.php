@@ -1,4 +1,12 @@
 <?php
+//Importando arquivos
+require_once "src/Conexao.php";
+require_once "src/Personagem.php";
+
+//Testando conexão
+//$bd = new Conexao();
+//var_dump( $bd->getMysqli() );
+
 //Inicializando sessão
 session_start();
 
@@ -7,6 +15,23 @@ if( !isset( $_SESSION["rpg"] ) ) {
     $_SESSION["rpg"] = array();
 }
 
+if( $_SERVER["REQUEST_METHOD"] == "POST" ) {
+    $nome = $_POST["nome"];
+    $classe = $_POST["classe"];
+    $forca = $_POST["forca"];
+    $agilidade = $_POST["agilidade"];
+    $inteligencia = $_POST["inteligencia"];
+
+    $personagem = new Personagem(
+        nome: $nome,
+        classe: $classe,
+        forca: $forca,
+        agilidade: $agilidade,
+        inteligencia: $inteligencia
+    );
+
+    var_dump( $personagem );
+}
 
 ?>
 
