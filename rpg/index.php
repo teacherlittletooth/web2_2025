@@ -1,18 +1,14 @@
 <?php
 //Importando arquivos
-require_once "src/Conexao.php";
+require_once "src/PersonagemDAO.php";
 require_once "src/Personagem.php";
-
-//Testando conexão
-//$bd = new Conexao();
-//var_dump( $bd->getMysqli() );
 
 //Inicializando sessão
 session_start();
 
 //Testando se já existe uma sessão
 if( !isset( $_SESSION["rpg"] ) ) {
-    $_SESSION["rpg"] = array();
+    $_SESSION["rpg"] = null;
 }
 
 if( $_SERVER["REQUEST_METHOD"] == "POST" ) {
@@ -30,7 +26,19 @@ if( $_SERVER["REQUEST_METHOD"] == "POST" ) {
         inteligencia: $inteligencia
     );
 
-    var_dump( $personagem );
+    try {
+        $bd = new PersonagemDAO();
+        $bd->salvar($personagem);
+        $_SESSION["rpg"] = "Personagem registrado!";
+    } catch(Exception $erro) {
+        $_SESSION["rpg"] = "Ocorreu algum erro.";
+    }
+
+    //var_dump( $_SESSION["rpg"] );
+    echo "<script>
+            alert('{$_SESSION["rpg"]}');
+            window.location.replace('index.php');
+          </script>";
 }
 
 ?>
