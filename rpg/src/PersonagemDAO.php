@@ -5,6 +5,8 @@ require_once "Conexao.php";
 
 class PersonagemDAO {
     private $con;
+    private $table = "personagens";
+    private $id = "id_personagem";
 
     //Função que retorna o objeto de conexão
     //com o banco de dados
@@ -19,7 +21,7 @@ class PersonagemDAO {
     //query SQL para posterior execução no BD.
     public function salvar(Personagem $personagem) {
         //Criando a instrução SQL
-        $sql = "INSERT INTO personagens(nome, forca,
+        $sql = "INSERT INTO {$this->table}(nome, forca,
                 agilidade, inteligencia)
                 VALUES(
                     '{$personagem->getNome()}',
@@ -34,6 +36,20 @@ class PersonagemDAO {
 
         $this->getCon()->close();
         
+        return $status;
+    }
+
+    public function listarTodos() {
+        $sql = "SELECT * FROM {$this->table}";
+        $lista = $this->getCon()->query($sql)->fetch_all();
+        $this->getCon()->close();
+        return $lista;
+    }
+
+    public function apagar($id) {
+        $sql = "DELETE FROM {$this->table} WHERE {$this->id} = $id";
+        $status = $this->getCon()->query($sql);
+        $this->getCon()->close();
         return $status;
     }
 }

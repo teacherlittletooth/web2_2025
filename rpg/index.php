@@ -3,6 +3,9 @@
 require_once "src/PersonagemDAO.php";
 require_once "src/Personagem.php";
 
+//Objeto da classe PersonagemDAO
+$bd = new PersonagemDAO();
+
 //Inicializando sessão
 session_start();
 
@@ -86,5 +89,48 @@ if( $_SERVER["REQUEST_METHOD"] == "POST" ) {
 
         <input type="submit" value="Registrar">
     </form>
+
+    <hr>
+
+    <h3>Lista de personagens</h3>
+
+    <table>
+        <thead>
+            <th>ID</th>
+            <th>NOME</th>
+            <th>CLASSE</th>
+            <th>FORÇA</th>
+            <th>AGILIDADE</th>
+            <th>INTELIGÊNCIA</th>
+            <th></th>
+            <th></th>
+        </thead>
+        <tbody>
+            <?php foreach( $bd->listarTodos() as $p ) : ?>
+                <tr>
+                    <td> <?= $p[0] ?> </td>
+                    <td> <?= $p[1] ?> </td>
+                    <td> <?= $p[2] ?> </td>
+                    <td> <?= $p[3] ?> </td>
+                    <td> <?= $p[4] ?> </td>
+                    <td> <?= $p[5] ?> </td>
+                    <td>
+                        <button>Alterar</button>
+                    </td>
+                    <td>
+                        <button onclick="excluir(<?= $p[0] ?>, '<?= $p[1] ?>')">Excluir</button>
+                    </td>
+                </tr>
+            <?php endforeach ?>
+        </tbody>
+    </table>
+
+    <script>
+        function excluir(id, nome) {
+            if( confirm("Excluir o personagem "+ nome +"?") ) {
+                window.location.replace("exclui-personagem.php?id=" + id)
+            }
+        }
+    </script>
 </body>
 </html>
