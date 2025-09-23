@@ -1,25 +1,23 @@
 <?php
 
-if( isset( $_GET["id"] ) ) {
+if( isset($_GET["id"]) ) {
     require_once "src/PersonagemDAO.php";
-
     $bd = new PersonagemDAO();
-
     $id = intval( $_GET["id"] );
-
-    $result = $bd->apagar($id);
-
-    if( $result ) {
+    
+    try {
+        $bd->apagar($id);
         echo "<script>
                 alert('✅ Personagem excluído!');
                 window.location.replace('index.php');
             </script>";
-    } else {
+    } catch(Exception $erro) {
         echo "<script>
-                alert('❌ Ocorreu algum erro.');
+                alert('❌ Ocorreu algum erro...');
                 window.location.replace('index.php');
             </script>";
     }
+
 } else {
     header("location: index.php");
 }

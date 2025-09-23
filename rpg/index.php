@@ -3,7 +3,7 @@
 require_once "src/PersonagemDAO.php";
 require_once "src/Personagem.php";
 
-//Objeto da classe PersonagemDAO
+//Criando objeto da classe PersonagemDAO
 $bd = new PersonagemDAO();
 
 //Inicializando sessão
@@ -92,7 +92,7 @@ if( $_SERVER["REQUEST_METHOD"] == "POST" ) {
 
     <hr>
 
-    <h3>Lista de personagens</h3>
+    <h3>Lista de personagens:</h3>
 
     <table>
         <thead>
