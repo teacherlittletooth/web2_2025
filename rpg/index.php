@@ -3,8 +3,8 @@
 require_once "src/PersonagemDAO.php";
 require_once "src/Personagem.php";
 
-//Criando objeto da classe PersonagemDAO
 $bd = new PersonagemDAO();
+//var_dump( $bd->listarTodos() );
 
 //Inicializando sessão
 session_start();
@@ -31,8 +31,16 @@ if( $_SERVER["REQUEST_METHOD"] == "POST" ) {
 
     try {
         $bd = new PersonagemDAO();
-        $bd->salvar($personagem);
-        $_SESSION["rpg"] = "Personagem registrado!";
+
+        if( $_POST["id"] != null || $_POST["id"] != "" ) {
+            $id = $_POST["id"];
+            $result = $bd->editar(intval($id), $personagem);
+            $_SESSION["rpg"] = "Personagem editado!";
+            var_dump($result);
+        } else {
+            $bd->salvar($personagem);
+            $_SESSION["rpg"] = "Personagem registrado!";
+        }
     } catch(Exception $erro) {
         $_SESSION["rpg"] = "Ocorreu algum erro.";
     }
@@ -40,7 +48,7 @@ if( $_SERVER["REQUEST_METHOD"] == "POST" ) {
     //var_dump( $_SESSION["rpg"] );
     echo "<script>
             alert('{$_SESSION["rpg"]}');
-            window.location.replace('index.php');
+            //window.location.replace('index.php');
           </script>";
 }
 
@@ -54,9 +62,11 @@ if( $_SERVER["REQUEST_METHOD"] == "POST" ) {
     <title>RPG</title>
 </head>
 <body>
-    <h1>Novo personagem</h1>
+    <h1 id="titulo">Novo personagem</h1>
 
     <form action="#" method="post">
+        <input type="hidden" name="id" id="id">
+
         <input type="text" name="nome" id="nome" placeholder="Nome do personagem" required>
 
         <br><br>
@@ -87,16 +97,17 @@ if( $_SERVER["REQUEST_METHOD"] == "POST" ) {
 
         <br><br>
 
-        <input type="submit" value="Registrar">
+        <input type="submit" value="Registrar" id="btn-submit">
+        <button id="btn-cancelar" onclick="restaurar()"> Cancelar edição </button>
     </form>
 
     <hr>
 
-    <h3>Lista de personagens:</h3>
-
+    <section id="lista">
+    <h3>Lista de personagens</h3>
     <table>
         <thead>
-            <th>ID</th>
+            <th>COD</th>
             <th>NOME</th>
             <th>CLASSE</th>
             <th>FORÇA</th>
@@ -114,8 +125,15 @@ if( $_SERVER["REQUEST_METHOD"] == "POST" ) {
                     <td> <?= $p[3] ?> </td>
                     <td> <?= $p[4] ?> </td>
                     <td> <?= $p[5] ?> </td>
-                    <td>
-                        <button>Alterar</button>
+                    <td> 
+                        <button onclick="editar(
+                                            <?= $p[0] ?>,
+                                            '<?= $p[1] ?>',
+                                            '<?= $p[2] ?>',
+                                            <?= $p[3] ?>,
+                                            <?= $p[4] ?>,
+                                            <?= $p[5] ?>
+                                        )"> Alterar </button> 
                     </td>
                     <td>
                         <button onclick="excluir(<?= $p[0] ?>, '<?= $p[1] ?>')">Excluir</button>
@@ -123,11 +141,46 @@ if( $_SERVER["REQUEST_METHOD"] == "POST" ) {
                 </tr>
             <?php endforeach ?>
         </tbody>
+        
     </table>
+    </section>
 
     <script>
+        //Mapeando componentes html
+        const titulo = document.getElementById("titulo");
+        const campoNome = document.getElementById("nome");
+        const campoClasse = document.getElementById("classe");
+        const campoForca = document.getElementById("forca");
+        const campoAgilidade = document.getElementById("agilidade");
+        const campoInteligencia = document.getElementById("inteligencia");
+        const btnAlterar = document.getElementById("btn-alterar");
+        const btnCancelar = document.getElementById("btn-cancelar");
+        const lista = document.getElementById("lista");
+        const btnSubmit = document.getElementById("btn-submit");
+        const campoId = document.getElementById("id");
+
+        //Escondendo o botão de cancelar edição
+        btnCancelar.style.display = "none";
+
+        function editar(id, nome, classe, forca, agilidade, inteligencia) {
+            btnCancelar.style.display = "inline";
+            lista.style.display = "none";
+            titulo.innerHTML = "Editar personagem";
+            btnSubmit.value = "Atualizar";
+            campoId.value = id;
+            campoNome.value = nome;
+            campoClasse.value = classe;
+            campoForca.value = forca;
+            campoAgilidade.value = agilidade;
+            campoInteligencia.value = inteligencia;
+        }
+
+        function restaurar() {
+            window.location.reload();
+        }
+
         function excluir(id, nome) {
-            if( confirm("Excluir o personagem "+ nome +"?") ) {
+            if( confirm("Excluir o personagem " + nome + "?") ) {
                 window.location.replace("exclui-personagem.php?id=" + id)
             }
         }
