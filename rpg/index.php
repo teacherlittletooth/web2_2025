@@ -1,9 +1,11 @@
 <?php
 //Importando arquivos
 require_once "src/PersonagemDAO.php";
+require_once "src/ClasseDAO.php";
 require_once "src/Personagem.php";
 
 $bd = new PersonagemDAO();
+$bdClasse = new ClasseDAO();
 //var_dump( $bd->listarTodos() );
 
 //Inicializando sessão
@@ -30,13 +32,11 @@ if( $_SERVER["REQUEST_METHOD"] == "POST" ) {
     );
 
     try {
-        $bd = new PersonagemDAO();
-
         if( $_POST["id"] != null || $_POST["id"] != "" ) {
             $id = $_POST["id"];
             $result = $bd->editar(intval($id), $personagem);
             $_SESSION["rpg"] = "Personagem editado!";
-            var_dump($result);
+            //var_dump($result);
         } else {
             $bd->salvar($personagem);
             $_SESSION["rpg"] = "Personagem registrado!";
@@ -73,12 +73,12 @@ if( $_SERVER["REQUEST_METHOD"] == "POST" ) {
 
         <select name="classe" id="classe" required>
             <option value="">Selecione uma classe...</option>
-            <option value="Mago">Mago</option>
-            <option value="Orc">Orc</option>
-            <option value="Paladino">Paladino</option>
-            <option value="Ladino">Ladino</option>
-            <option value="Guerreiro">Guerreiro</option>
+            <?php foreach($bdClasse->listarTodos() as $c) : ?>
+                <option value="<?= $c[0] ?>"> <?= $c[1] ?> </option>
+            <?php endforeach ?>
         </select>
+
+        <button title="Cadastrar nova classe" onclick="window.location.href='classe.php'">Nova classe</button>
 
         <br><br>
 
@@ -98,8 +98,9 @@ if( $_SERVER["REQUEST_METHOD"] == "POST" ) {
         <br><br>
 
         <input type="submit" value="Registrar" id="btn-submit">
-        <button id="btn-cancelar" onclick="restaurar()"> Cancelar edição </button>
     </form>
+    <br>
+    <button id="btn-cancelar" onclick="restaurar()"> Cancelar edição </button>
 
     <hr>
 
@@ -121,7 +122,7 @@ if( $_SERVER["REQUEST_METHOD"] == "POST" ) {
                 <tr>
                     <td> <?= $p[0] ?> </td>
                     <td> <?= $p[1] ?> </td>
-                    <td> <?= $p[2] ?> </td>
+                    <td> <?= $p[6] ?> </td>
                     <td> <?= $p[3] ?> </td>
                     <td> <?= $p[4] ?> </td>
                     <td> <?= $p[5] ?> </td>

@@ -3,10 +3,10 @@
 //Importar arquivo
 require_once "Conexao.php";
 
-class PersonagemDAO {
+class ClasseDAO {
     private $con;
-    private $table = "personagens";
-    private $id = "id_personagem";
+    private $table = "classes";
+    private $id = "id_classe";
 
     //Função que retorna o objeto de conexão
     //com o banco de dados
@@ -17,19 +17,15 @@ class PersonagemDAO {
     }
 
     //Função que recebe como parâmetro um objeto
-    //da classe Personagem e o distribui numa
+    //da classe Classe e o distribui numa
     //query SQL para posterior execução no BD.
-    public function salvar(Personagem $personagem)
+    public function salvar(Classe $classe)
     {
         //Criando a instrução SQL
-        $sql = "INSERT INTO {$this->table}(nome, id_classe, forca,
-                agilidade, inteligencia)
+        $sql = "INSERT INTO {$this->table}(classe, caracteristicas)
                 VALUES(
-                    '{$personagem->getNome()}',
-                    {$personagem->getClasse()},
-                    {$personagem->getForca()},
-                    {$personagem->getAgilidade()},
-                    {$personagem->getInteligencia()}
+                    '{$classe->getClasse()}',
+                    '{$classe->getCaracteristicas()}'
                 )";
 
         //Executando a instrução, e lançando a sua saída
@@ -43,11 +39,7 @@ class PersonagemDAO {
 
     public function listarTodos()
     {
-        $sql = "SELECT {$this->table}.*,
-                       classes.classe
-                FROM {$this->table}
-                INNER JOIN classes
-                ON personagens.id_classe = classes.id_classe;";
+        $sql = "SELECT * FROM {$this->table}";
 
         $lista = $this->getCon()->query($sql)->fetch_all();
 
@@ -67,14 +59,11 @@ class PersonagemDAO {
         return $result;
     }
 
-    public function editar(int $id, Personagem $personagem)
+    public function editar(int $id, Classe $classe)
     {
         $sql = "UPDATE {$this->table} SET
-                nome = '{$personagem->getNome()}',
-                id_classe = {$personagem->getClasse()},
-                forca = {$personagem->getForca()},
-                agilidade = {$personagem->getAgilidade()},
-                inteligencia = {$personagem->getInteligencia()} WHERE
+                classe = '{$classe->getClasse()}',
+                caracteristicas = '{$classe->getCaracteristicas()}' WHERE
                 {$this->id} = $id";
 
         $status = $this->getCon()->query($sql);
