@@ -19,7 +19,8 @@ class PersonagemDAO {
     //Função que recebe como parâmetro um objeto
     //da classe Personagem e o distribui numa
     //query SQL para posterior execução no BD.
-    public function salvar(Personagem $personagem) {
+    public function salvar(Personagem $personagem)
+    {
         //Criando a instrução SQL
         $sql = "INSERT INTO {$this->table}(nome, forca,
                 agilidade, inteligencia)
@@ -39,17 +40,41 @@ class PersonagemDAO {
         return $status;
     }
 
-    public function listarTodos() {
+    public function listarTodos()
+    {
         $sql = "SELECT * FROM {$this->table}";
+
         $lista = $this->getCon()->query($sql)->fetch_all();
+
         $this->getCon()->close();
+
         return $lista;
     }
 
-    public function apagar($id) {
+    public function apagar($id)
+    {
         $sql = "DELETE FROM {$this->table} WHERE {$this->id} = $id";
-        $status = $this->getCon()->query($sql);
+
+        $result = $this->getCon()->query($sql);
+
         $this->getCon()->close();
+
+        return $result;
+    }
+
+    public function editar(int $id, Personagem $personagem)
+    {
+        $sql = "UPDATE {$this->table} SET
+                nome = '{$personagem->getNome()}',
+                forca = {$personagem->getForca()},
+                agilidade = {$personagem->getAgilidade()},
+                inteligencia = {$personagem->getInteligencia()} WHERE
+                {$this->id} = $id";
+
+        $status = $this->getCon()->query($sql);
+
+        $this->getCon()->close();
+
         return $status;
     }
 }
